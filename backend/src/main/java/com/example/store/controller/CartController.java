@@ -19,7 +19,7 @@ public class CartController {
         return cartItemRepository.findByUserId(userId);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public CartItem addToCart(@RequestBody CartItem cartItem) {
         return cartItemRepository.save(cartItem);
     }
