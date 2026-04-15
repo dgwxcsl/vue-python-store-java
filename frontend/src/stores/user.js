@@ -2,8 +2,20 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: JSON.parse((localStorage.getItem('user') || 'null').replace(/^"undefined"$/, 'null')),
-    token: localStorage.getItem('token') || ''
+    user: (() => {
+      const raw = localStorage.getItem('user')
+      if (!raw || raw === 'null' || raw === 'undefined') return null
+      try {
+        return JSON.parse(raw)
+      } catch {
+        return null
+      }
+    })(),
+    token: (() => {
+      const raw = localStorage.getItem('token')
+      if (!raw || raw === 'null' || raw === 'undefined') return ''
+      return raw
+    })()
   }),
   getters: {
     isLoggedIn: (state) => !!state.token,

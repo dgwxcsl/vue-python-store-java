@@ -2,7 +2,11 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: '/api',
-  timeout: 5000
+  timeout: 5000,
+  headers: {
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache'
+  }
 })
 
 // 请求拦截器
@@ -47,7 +51,13 @@ export const productAPI = {
 
 // 购物车相关
 export const cartAPI = {
-  getCart: () => api.get('/cart'),
+  getCart: (userId) => api.get(`/cart/${userId}`, {
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+      // 不发送Authorization头，因为购物车API是permitAll
+    }
+  }),
   addToCart: (data) => api.post('/cart/add', data),
   updateQuantity: (id, quantity) => api.put(`/cart/${id}`, { quantity }),
   removeFromCart: (id) => api.delete(`/cart/${id}`),

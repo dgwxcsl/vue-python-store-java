@@ -97,8 +97,9 @@ const totalPrice = computed(() => {
     .toFixed(2)
 })
 
-onMounted(() => {
-  cartStore.fetchCart()
+onMounted(async () => {
+  await cartStore.fetchCart()
+  selectAll.value = cartStore.items.length > 0
 })
 
 const toggleSelectAll = () => {

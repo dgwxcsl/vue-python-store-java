@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { cartAPI } from '../api'
+import { useUserStore } from './user'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
@@ -15,16 +16,36 @@ export const useCartStore = defineStore('cart', {
   actions: {
     async fetchCart() {
       try {
-        const response = await cartAPI.getCart()
-        this.items = response.data || []
+        const userStore = useUserStore()
+        const userId = userStore.user?.id
+        if (!userId) {
+          this.items = []
+          return
+        }
+        const response = await cartAPI.getCart(userId)
+        // 转换后端返回的数据为前端期望的扁平结构
+        this.items = (response.data || []).map(item => ({
+          id: item.id,
+          name: item.product?.name || '未知商品',
+          price: item.product?.price || 0,
+          quantity: item.quantity,
+          selected: true // 默认选中，结算金额会自动更新
+        }))
       } catch (error) {
         console.error('获取购物车失败:', error)
+        this.items = []
       }
     },
     async addToCart(product) {
       try {
+        const userStore = useUserStore()
+        const userId = userStore.user?.id
+        if (!userId) {
+          throw new Error('用户未登录')
+        }
         await cartAPI.addToCart({
-          productId: product.id,
+          user: { id: userId },
+          product: { id: product.id },
           quantity: 1
         })
         await this.fetchCart()
