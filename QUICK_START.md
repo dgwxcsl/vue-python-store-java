@@ -59,10 +59,13 @@ npm run dev
 cd backend
 
 # 使用 Maven 启动
-mvnw.cmd spring-boot:run
+mvnw.cmd spring-boot:run(或者前面直接加.\)
 ```
 
 或使用 IDE：
+
+
+
 - 打开 `backend/StoreApplication.java`
 - 点击运行按钮
 
